@@ -1,13 +1,10 @@
 var passport = require("passport");
-
-//const logger = require('./logger');
-
 var GoogleStrategy = require("passport-google-oauth20").Strategy;
 var keys = require('./keys');
 var mongoose = require('mongoose');
 // model
 var User = mongoose.model('User');
-//var Shop = mongoose.model('Shop');
+var Item = mongoose.model('Item');
 
 passport.serializeUser((user, done) => {
     done(null, user.id);
@@ -33,12 +30,11 @@ passport.use(
             googleId: profile.id
         }, function (err, currentUser) {
             if (err) {
-                //logger.log('error', 'message occured while finding current user')
+                console.log(err);
             } else {
                 if (currentUser) {
                     // already have the user
-                    //console.log('user is: ', currentUser);
-                    //logger.log('info', 'user logged in');
+                    console.log('user is: ', currentUser);
                     done(null, currentUser);
                 } else {
                     // if not, create user in our db
@@ -49,13 +45,12 @@ passport.use(
                         userImage: profile._json.picture
                     }).save().then((newUser) => {
                         //console.log('new user created: ' + newUser);
-                        //logger.log('info', 'new user created');
 
-                        /*new Shop({
+                        new Item({
                             ownerEmail: newUser.userEmail
-                        }).save().then((newShop) => {
-                            //logger.log('info', 'Shop created for new user');
-                        });*/
+                        }).save().then((newItemArray) => {
+                            console.log('Shop created for new user');
+                        });
 
                         done(null, newUser);
                     });

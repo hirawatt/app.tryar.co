@@ -5,14 +5,7 @@ var user = new Schema({
     userName: String,
     googleId: String,
     userEmail: String,
-    userImage: String,
-    userPhoneNo: [{
-        value: String,
-        verified: {
-            type: Boolean,
-            default: false
-        }
-    }]
+    userImage: String
 });
 
 mongoose.model('User', user);

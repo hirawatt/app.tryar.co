@@ -6,8 +6,8 @@ const mongoose = require('mongoose');
 const app = express();
 const PORT = process.env.PORT || 8000;
 
-require('./model/users');
-require('./model/items');
+require('./model/user');
+require('./model/item');
 require('dotenv').config();
 require('./config/passport-setup');
 
