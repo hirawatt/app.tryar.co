@@ -12,6 +12,7 @@ require('dotenv').config();
 require('./config/passport-setup');
 
 const keys = require('./config/keys');
+const cookieSession = require('cookie-session');
 
 const corsOptions = {
     credentials: true,
@@ -29,11 +30,16 @@ const authRoutes = require("./routes/auth-routes");
 const databaseApiRoutes = require("./routes/database-api-routes");
 
 app.use(bodyParser.json());
-
 app.use(bodyParser.urlencoded({
     extended: false
 }));
 app.use(cors(corsOptions));
+
+app.use(cookieSession({
+    name: 'login',
+    maxAge: 60 * 60 * 1000 * 24, //time in millisec
+    keys: [keys.session.cookieKey]
+}));
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -43,4 +49,4 @@ app.use('/api', authRoutes);
 app.use('/api', databaseApiRoutes);
 
 // listining for port
-app.listen(PORT, () => console.log(`TryAR running on port ${PORT}....`));
+app.listen(PORT, () => console.log(`TryAR backend running on port ${PORT}....`));

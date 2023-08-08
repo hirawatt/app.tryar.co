@@ -3,7 +3,7 @@ import './GoogleButton.css';
 const GoogleButton = () => {
         return (
             <div className="log-in-btn">
-                <a href={`${import.meta.env.BACKEND_API}/auth/google`} className="button google-button-a-tag">
+                <a href={`${import.meta.env.VITE_BACKEND_API}/auth/google`} className="button google-button-a-tag">
                     <div className="btn-space">
                         <span className="svgIcon t-popup-svg">
                             <svg
