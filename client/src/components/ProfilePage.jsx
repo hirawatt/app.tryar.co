@@ -1,8 +1,26 @@
+import { connect } from 'react-redux';
+import NavBar from './NavBar';
 
-const ProfilePage = () => {
+
+const ProfilePage = (props) => {
+  /*eslint-disable*/
   return (
-    <div>ProfilePage</div>
+    <div>
+      <NavBar/>
+      {<img className="profile-image" alt="profile" src={props.user ? props.user.userImage : ''}/>}
+      <h1> Email</h1> <p>thekatohome@gmail.com</p>
+      <p>{props.user ? props.user.userName : null}</p>
+    </div>
   )
+  /*eslint-enable*/
 }
 
-export default ProfilePage;
+const mapStateToProps = (state) => {
+  //console.log(state);
+  return {
+    user: state
+  }
+};
+
+const ConnectedProfilePage = connect(mapStateToProps)(ProfilePage);
+export default ConnectedProfilePage;

@@ -48,5 +48,15 @@ app.use(passport.session());
 app.use('/api', authRoutes);
 app.use('/api', databaseApiRoutes);
 
+app.get('/items', (req, res) => res.redirect(process.env.CLIENT_URI + '/items' || 'http://localhost:3000/items'));
+app.get('/', (req, res) => res.redirect(process.env.CLIENT_URI || 'http://localhost:3000'));
+
+//unknown path
+app.use((req, res, next) => {
+    const err = new Error('Not found');
+    err.status = 404;
+    next(err);
+});
+
 // listining for port
 app.listen(PORT, () => console.log(`TryAR backend running on port ${PORT}....`));
