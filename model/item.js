@@ -2,8 +2,8 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var item = new Schema({
-    ownerEmail: String,
-    item: [{
+    userId: String, //using mongodb generated Id to ref items
+    itemArray: [{
         itemName: String,
         itemLocation: String,
     }]

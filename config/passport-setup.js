@@ -29,7 +29,7 @@ passport.use(
         }).then(currentUser => {
             if (currentUser) {
                 // already have the user
-                console.log('user is: ', currentUser);
+                //console.log('user is: ', currentUser);
                 done(null, currentUser);
             } else {
                 // if not, create user in our db
@@ -39,12 +39,12 @@ passport.use(
                     userEmail: profile.emails[0].value,
                     userImage: profile._json.picture
                 }).save().then((newUser) => {
-                    console.log('new user created: ' + newUser);
+                    //console.log('new user created: ' + newUser);
 
                     new Item({
-                        ownerEmail: newUser.userEmail
+                        userId: newUser._id
                     }).save().then((newItemArray) => {
-                        console.log('Shop created for new user');
+                        console.log('ItemArray created for new user');
                     });
 
                     done(null, newUser);
