@@ -5,7 +5,7 @@ import {Routes, Route} from 'react-router-dom';
 import FrontPage from './components/FrontPage';
 import ConnectedProfilePage from './components/ProfilePage';
 import ItemUploadPage from './components/ItemUploadPage';
-import ARPage from './components/ARPage';
+import XrHitModelContainer from './components/ar/XrHitModelContainer';
 import { fetchUser } from './store/actions/authActions';
 
 function App(props) {
@@ -18,7 +18,7 @@ function App(props) {
       <Route exact path="/" element={<FrontPage />} />
       <Route path="/profile" element={<ConnectedProfilePage />} />
       <Route path="/items" element={<ItemUploadPage />} />
-      <Route path="/ar/:userId" component={ARPage} />
+      <Route path="/ar/:userId" element={<XrHitModelContainer />} />
     </Routes>
   )
 }
