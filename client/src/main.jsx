@@ -12,11 +12,11 @@ const store = configureStore({
 });
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <Router>
-    <Provider store={store}>
-      <React.StrictMode>
+  <React.StrictMode>
+    <Router>
+      <Provider store={store}>
         <ConnectedApp />
-      </React.StrictMode>
-    </Provider>
-  </Router>
+      </Provider>
+    </Router>
+  </React.StrictMode>
 )
