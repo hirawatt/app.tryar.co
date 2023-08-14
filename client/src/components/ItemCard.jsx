@@ -1,4 +1,4 @@
-import TryARLogo from '../assets/TryAR-Logo.png';
+import TryARLogo from '../assets/tryAR-logo.png';
 
 // Define a Card component that takes props for image and text
 const Card = () => {
