@@ -1,11 +1,47 @@
 const router = require('express').Router();
 var mongoose = require('mongoose');
+const multer = require('multer');
 
 // model
 var Item = mongoose.model('Item');
 const {
     ObjectId
 } = require('mongodb');
+
+//prerequisite for file upload
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './uploads/');
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + file.originalname);
+    }
+});
+
+const fileFilter = (req, file, cb) => {
+    // accept a file
+    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'application/pdf' || file.mimetype === 'application/vnd.openxmlformats-officedocument.wordprocessing' || file.mimetype === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+        cb(null, true);
+    } else {
+        // reject a file
+        cb(null, false);
+    }
+};
+
+const upload = multer({
+
+    storage: storage,
+    limits: {
+        fileSize: 1024 * 1024 * 5 //5 mb
+    },
+    fileFilter: fileFilter
+});
+
+//file upload
+router.post("/upload", upload.single('item'), (req, res, next) => {
+    console.log(req.file);
+    res.send('file uploaded');
+});
 
 //add items
 router.put('/add-item', function (request, response, next) {
