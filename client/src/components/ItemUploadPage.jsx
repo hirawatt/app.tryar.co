@@ -4,10 +4,11 @@ import FileUpload from './fileUpload/FileUpload';
 
 const ItemUploadPage = () => {
   return (
-    <div>
+    <div className='container-snap'>
       <NavBar />
       <FileUpload />
-      <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', padding: '10px'}}>
+      <div className='grid lg:grid-cols-3 h-screen p-10'>
+        <Card />
         <Card />
         <Card />
         <Card />

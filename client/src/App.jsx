@@ -1,4 +1,3 @@
-import './App.css';
 import { useEffect } from 'react';
 import { connect } from 'react-redux';
 import {Routes, Route} from 'react-router-dom';

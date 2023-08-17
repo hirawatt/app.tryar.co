@@ -55,8 +55,8 @@ const FileUpload = () => {
   return (
     <Fragment>
       {message ? <Message msg={message} /> : null}
-      <form onSubmit={onSubmit}>
-        <div className='custom-file mb-4'>
+      <form onSubmit={onSubmit} className='flex flex-col'>
+        <div className='mx-auto'>
           <input
             type='file'
             className='custom-file-input'
