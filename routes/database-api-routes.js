@@ -1,6 +1,8 @@
 const router = require('express').Router();
 var mongoose = require('mongoose');
 const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 
 // model
 var Item = mongoose.model('Item');
@@ -10,8 +12,22 @@ const {
 
 //prerequisite for file upload
 const storage = multer.diskStorage({
+
+    // Use the unique id as a parameter in the destination function
     destination: function (req, file, cb) {
-        cb(null, './uploads/');
+        // Get the unserid from req.body
+        const userId = req.body.userId;
+
+        // Create a subfolder path using the userid
+        const subfolder = path.join('uploads', userId);
+
+        // Check if the subfolder exists, if not create it
+        fs.access(subfolder, (error) => {
+            if (error) {
+                return fs.mkdir(subfolder, (error) => cb(error, subfolder));
+            }
+            return cb(null, subfolder);
+        });
     },
     filename: function (req, file, cb) {
         cb(null, Date.now() + file.originalname);
@@ -29,7 +45,6 @@ const fileFilter = (req, file, cb) => {
 };
 
 const upload = multer({
-
     storage: storage,
     limits: {
         fileSize: 1024 * 1024 * 5 //5 mb
@@ -38,8 +53,15 @@ const upload = multer({
 });
 
 //file upload
-router.post("/upload", upload.single('item'), (req, res, next) => {
-    console.log(req.file);
+router.post("/upload", upload.fields([{
+    name: 'imgFile',
+    maxCount: 1
+}, {
+    name: 'modelFile',
+    maxCount: 1
+}]), (req, res, next) => {
+    console.log(req.files.imgFile[0].path);
+    console.log(req.files.modelFile[0].path);
     res.send('file uploaded');
 });
 

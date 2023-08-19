@@ -6,11 +6,13 @@ import NavBar from './NavBar';
 const Frontpage = (props) => {
   /*eslint-disable*/
   return (
-    <div className='flex flex-col items-center justify-center h-screen'>
+    <div>
       {props.user ? <NavBar /> : null}
+      <div className='flex flex-col items-center justify-center h-screen'>
       <img className='h-56' src={TryARLogo} alt="TryAR logo"/>
       <h1 className='text-center'>Plug & Play <br/>Augmented Reality App</h1>
-      {props.user ? null : <GoogleButton/>}
+      {props.user ? null : <GoogleButton/>} 
+      </div>
     </div>
   ) 
   /*eslint-enable*/
