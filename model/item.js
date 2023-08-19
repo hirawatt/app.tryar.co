@@ -5,7 +5,8 @@ var item = new Schema({
     userId: String, //using mongodb generated Id to ref items
     itemArray: [{
         itemName: String,
-        itemLocation: String,
+        imgLocation: String,
+        modelLocation: String,
     }]
 });
 

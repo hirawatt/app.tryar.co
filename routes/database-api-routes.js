@@ -60,31 +60,25 @@ router.post("/upload", upload.fields([{
     name: 'modelFile',
     maxCount: 1
 }]), (req, res, next) => {
-    console.log(req.files.imgFile[0].path);
-    console.log(req.files.modelFile[0].path);
-    res.send('file uploaded');
-});
 
-//add items
-router.put('/add-item', function (request, response, next) {
+    //add item to database
     Item.updateOne({
-        userId: request.body.userId
-    }, {
-        $push: {
-            itemArray: {
-                itemName: request.body.itemName,
-                itemLocation: request.body.itemLocation
+            userId: req.body.userId
+        }, {
+            $push: {
+                itemArray: {
+                    itemName: req.body.fileName,
+                    imgLocation: req.files.imgFile[0].path,
+                    modelLocation: req.files.modelFile[0].path,
+                }
             }
-        }
-    }, function (err, res) { //res short for response
-        if (err) {
-            const error = new Error('Could not add the item');
-            next(error);
-            //response.status(500).send({error: "Could not update the menu"});
-        } else {
-            response.send(res);
-        }
-    });
+        }).then(response => {
+            res.send('file uploaded');
+        })
+        .catch(error => {
+            const err = new Error('Could not add the item');
+            res.send(err)
+        });
 });
 
 //get items array from userId

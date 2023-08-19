@@ -14,15 +14,15 @@ const FileUpload = () => {
 
   const onSubmit = async e => {
     e.preventDefault();
-    setUserId('64d9267005bb37fedc614e97');
+    setUserId('64e0b2cdce70f7d21c7849b8');
     const formData = new FormData();
-    formData.append('userId', userId); //userId to create a sub-folder to save file
+    formData.append('userId', userId); //userId to create a sub-folder to save file and save item location in database
     formData.append('fileName', fileName);
     formData.append('imgFile', imgFile);
     formData.append('modelFile', modelFile);
 
     try {
-      const res = await axios.post(`${import.meta.env.VITE_BACKEND_API}/upload`, formData, {
+      /*const res = await */axios.post(`${import.meta.env.VITE_BACKEND_API}/upload`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         },
@@ -35,12 +35,8 @@ const FileUpload = () => {
         }
       });
       
-      // Clear percentage
-      setTimeout(() => setUploadPercentage(0), 10000);
-
-      const { fileName, filePath } = res.data;
-
-      //setUploadedFile({ fileName, filePath });
+      // Clear percentage in 3 second
+      setTimeout(() => setUploadPercentage(0), 3000);
 
       setMessage('File Uploaded');
     } catch (err) {
@@ -49,7 +45,10 @@ const FileUpload = () => {
       } else {
         setMessage(err.response.data.msg);
       }
-      setUploadPercentage(0)
+      setFileName('');
+      setImgFile(null);
+      setModelFile(null);
+      setUploadPercentage(0);
     }
   };
 
