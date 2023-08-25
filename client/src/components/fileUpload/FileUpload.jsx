@@ -5,8 +5,8 @@ import axios from 'axios';
 
 const FileUpload = () => {
   const [fileName, setFileName] = useState('');
-  const [imgFile, setImgFile] = useState(null);
-  const [modelFile, setModelFile] = useState(null);
+  const [imgFile, setImgFile] = useState('');
+  const [modelFile, setModelFile] = useState('');
   const [userId, setUserId] = useState('');
   const [message, setMessage] = useState('');
   const [uploadPercentage, setUploadPercentage] = useState(0);
@@ -34,22 +34,29 @@ const FileUpload = () => {
           );
         }
       });
-      
-      // Clear percentage in 3 second
-      setTimeout(() => setUploadPercentage(0), 3000);
 
-      setMessage('File Uploaded');
+      setMessage('File Uploaded');  
+
+      // Clear percentage in 3 second
+      setTimeout(() => {
+        setUploadPercentage(0);
+        setMessage('');
+      }, 5000);
+
+    
     } catch (err) {
       if (err.response.status === 500) {
         setMessage('There was a problem with the server');
       } else {
         setMessage(err.response.data.msg);
       }
-      setFileName('');
-      setImgFile(null);
-      setModelFile(null);
-      setUploadPercentage(0);
     }
+
+    //clear input fields
+    setFileName('');
+    document.getElementById('imgFile').value = '';
+    document.getElementById('modelFile').value = '';
+    
   };
 
   return (
@@ -66,9 +73,10 @@ const FileUpload = () => {
             <input
             type='text'
             className='custom-file-input border border-gray-400'
-            id='customFile'
+            id='fileName'
             onChange={e => setFileName(e.target.value)}
             value={fileName}
+            required
             />
           </div>
 
@@ -79,7 +87,9 @@ const FileUpload = () => {
           <input
             type='file'
             className='custom-file-input'
-            id='customFile'
+            id='imgFile'
+            accept='image/*'
+            required
             onChange={e => setImgFile(e.target.files[0])}
           />
           </div>
@@ -91,7 +101,9 @@ const FileUpload = () => {
           <input
             type='file'
             className='custom-file-input'
-            id='customFile'
+            id='modelFile'
+            //accept=".glb"
+            required
             onChange={e => setModelFile(e.target.files[0])}
           />  
           </div>
@@ -103,7 +115,7 @@ const FileUpload = () => {
         <input
           type='submit'
           value='Upload'
-          className='btn btn-primary btn-block mt-4'
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full block w-full mt-4"
         />
       </form>
       {/*uploadedFile ? (
