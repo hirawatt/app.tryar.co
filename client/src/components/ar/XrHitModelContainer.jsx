@@ -4,18 +4,18 @@ import XrHitModel from "./XrHitModel";
 
 const XrHitModelContainer = () => {
   return (
-    <>
+    <div className="h-screen w-screen">
       <ARButton
         sessionInit={{
           requiredFeatures: ["hit-test"],
         }}
       />
-      <Canvas>
+      <Canvas className="h-full w-full">
         <XR>
           <XrHitModel />
         </XR>
       </Canvas>
-    </>
+    </div>
   );
 };
 
