@@ -43,7 +43,7 @@ const XrHitModel = () => {
       {isPresenting && (
         <Interactive onSelect={placeModel}>
           <mesh ref={reticleRef} rotation-x={-Math.PI / 2}> 
-            <ringGeometry args={[0.1, 0.25, 32]} />
+            <ringGeometry args={[0.15, 0.2, 32]} />
             <meshStandardMaterial color={"white"} />
           </mesh>
         </Interactive>

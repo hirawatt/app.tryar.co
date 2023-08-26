@@ -6,50 +6,34 @@ const fs = require('fs');
 
 // model
 var Item = mongoose.model('Item');
-const {
-    ObjectId
-} = require('mongodb');
+var User = mongoose.model('User');
 
 //prerequisite for file upload
 const storage = multer.diskStorage({
-
     // Use the unique id as a parameter in the destination function
-    destination: function (req, file, cb) {
-        // Get the unserid from req.body
-        const userId = req.body.userId;
-
+    destination: async function (req, file, cb) {
         // Create a subfolder path using the userid
-        const subfolder = path.join('uploads', userId);
-
-        // Check if the subfolder exists, if not create it
-        fs.access(subfolder, (error) => {
-            if (error) {
-                return fs.mkdir(subfolder, (error) => cb(error, subfolder));
-            }
-            return cb(null, subfolder);
-        });
+        const subfolder = path.join('uploads', req.body.userId);
+        try {
+            // Check if the subfolder exists, if not create it
+            await fs.promises.access(subfolder);
+        } catch (error) {
+            console.log('new directory created');
+            await fs.promises.mkdir(subfolder);
+        }
+        cb(null, subfolder);
     },
     filename: function (req, file, cb) {
         cb(null, Date.now() + file.originalname);
     }
 });
 
-const fileFilter = (req, file, cb) => {
-    // accept a file
-    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'application/pdf' || file.mimetype === 'application/vnd.openxmlformats-officedocument.wordprocessing' || file.mimetype === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
-        cb(null, true);
-    } else {
-        // reject a file
-        cb(null, false);
-    }
-};
 
 const upload = multer({
     storage: storage,
     limits: {
         fileSize: 1024 * 1024 * 5 //5 mb
-    },
-    fileFilter: fileFilter
+    }
 });
 
 //file upload
@@ -59,88 +43,112 @@ router.post("/upload", upload.fields([{
 }, {
     name: 'modelFile',
     maxCount: 1
-}]), (req, res, next) => {
-
-    //add item to database
-    Item.updateOne({
+}]), async (req, res, next) => {
+    try {
+        const item = {
+            itemName: req.body.fileName,
+            imgLocation: req.files.imgFile[0].path,
+            modelLocation: req.files.modelFile[0].path,
+        };
+        const itemUpdateResult = await Item.updateOne({
             userId: req.body.userId
         }, {
             $push: {
-                itemArray: {
-                    itemName: req.body.fileName,
-                    imgLocation: req.files.imgFile[0].path,
-                    modelLocation: req.files.modelFile[0].path,
-                }
+                itemArray: item
             }
-        }).then(response => {
-            res.send('file uploaded');
-        })
-        .catch(error => {
-            const err = new Error('Could not add the item');
-            res.send(err)
         });
+        res.send('file uploaded');
+    } catch (err) {
+        const error = new Error('Could not add the item');
+        res.send(error);
+    }
 });
+
 
 //get items array from userId
-router.get('/get-item/:userId', function (request, response, next) {
-    Item.find({
-        userId: request.params.userId
-    }, {
-        _id: 0,
-        itemArray: 1
-    }).exec(function (err, res) {
-        if (err) {
-            const error = new Error('No Item list found');
-            next(error);
-            //response.status(500).send({error: "No Menu For this Shop"});
-        } else {
-            response.send(res);
-        }
-    });
+router.get('/get-item/:userId', async function (request, response, next) {
+    try {
+        const res = await Item.find({
+            userId: request.params.userId
+        }, {
+            _id: 0,
+            itemArray: 1
+        });
+        response.send(res);
+    } catch (err) {
+        const error = new Error('No Item list found');
+        next(error);
+    }
 });
+
 
 //delete item from itemArray
-router.put('/delete-item', function (request, response, next) {
-    Item.updateOne({
-        userId: request.body.userId
-    }, {
-        $pull: {
-            "itemArray": {
-                "_id": {
-                    $in: ObjectId(request.body.itemId)
+router.put('/delete-item', async function (request, response, next) {
+    try {
+        const itemDeleteResult = await Item.updateOne({
+            userId: request.body.userId
+        }, {
+            $pull: {
+                "itemArray": {
+                    "_id": {
+                        $in: request.body.itemId
+                    }
                 }
             }
-        }
-    }, function (err, res) {
-        if (err) {
-            const error = new Error('Could not delete the item');
-            next(error);
-            //response.status(500).send({error: "Could not find the item"});
-        } else {
-            response.send(res);
-        }
-    })
+        });
+
+        //paths of the files to be deleted
+        const filesToBeDeleted = [request.body.imgLocation, request.body.modelLocation];
+
+        //Promise.all() to delete the files asynchronously
+        await Promise.all(
+            filesToBeDeleted.map((filePath) => {
+                return new Promise((resolve, reject) => {
+                    fs.unlink(filePath, (err) => {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve(`${filePath} deleted successfully`);
+                        }
+                    });
+                });
+            })
+        );
+
+        response.send(itemDeleteResult);
+    } catch (err) {
+        const error = new Error('Could not delete the item');
+        next(error);
+    }
 });
 
-//update an item in itemArray
-router.put('/update-item', function (request, response, next) {
-    Item.updateOne({
-        userId: request.body.userId,
-        "itemArray._id": request.body.itemId
-    }, {
-        $set: {
-            "itemArray.$.itemName": request.body.itemName,
-            "itemArray.$.itemLocation": request.body.itemLocation
-        }
-    }, function (err, res) {
-        if (err) {
-            const error = new Error('Could not update the Item');
-            next(error);
-            //response.status(500).send({error: "Could not update the menu Item"});
-        } else {
-            response.send(res);
-        }
-    });
+
+//delete the user
+router.put('/delete-user', async function (request, response, next) {
+    try {
+        const userDeleteResult = await User.deleteOne({
+            _id: request.body.userId
+        });
+        const itemDeleteResult = await Item.deleteOne({
+            userId: request.body.userId
+        });
+
+        // method to create an absolute path for the folder which needs to be deleted
+        const folderToBeDeleted = path.join('uploads', request.body.userId);
+
+        // Use the fs.rmdir() method to delete the folder
+        await fs.promises.rmdir(folderToBeDeleted, {
+            recursive: true
+        });
+
+        response.send({
+            userDeleteResult,
+            itemDeleteResult
+        });
+    } catch (err) {
+        const error = new Error('Could not delete the user');
+        next(error);
+    }
 });
 
 module.exports = router;
