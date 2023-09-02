@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import {Navigate, Routes, Route} from 'react-router-dom';
 import FrontPage from './components/FrontPage';
 import ConnectedProfilePage from './components/ProfilePage';
-import ItemUploadPage from './components/ItemUploadPage';
+import ConnectedItemUploadPage from './components/ItemUploadPage';
 import XrHitModelContainer from './components/ar/XrHitModelContainer';
 import { fetchUser } from './store/actions/authActions';
 import PropTypes from 'prop-types';
@@ -21,7 +21,7 @@ function App(props) {
     <Routes>
       <Route exact path="/" element={<FrontPage />} />
       <Route path="/profile" element={<ConnectedProfilePage />} />
-      <Route path="/items" element={<ItemUploadPage />} />
+      <Route path="/items" element={<ConnectedItemUploadPage />} />
       <Route path="/ar/:userId" element={<XrHitModelContainer />} />
     </Routes>
   )
@@ -31,7 +31,7 @@ function App(props) {
     <Routes>
       <Route exact path="/" element={<FrontPage />} />
       <Route path="/profile" element={props.user ? <ConnectedProfilePage /> : <Navigate to="/" />} />
-      <Route path="/items" element={props.user ? <ItemUploadPage /> : <Navigate to="/" />} />
+      <Route path="/items" element={props.user ? <ConnectedItemUploadPage /> : <Navigate to="/" />} />
       <Route path="/ar/:userId" element={props.user ? <XrHitModelContainer /> : <Navigate to="/" />} />
     </Routes>
   )*/

@@ -22,7 +22,7 @@ const FileUpload = () => {
     formData.append('modelFile', modelFile);
 
     try {
-      /*const res = await */axios.post(`${import.meta.env.VITE_BACKEND_API}/upload`, formData, {
+      /*const res = */await axios.post(`${import.meta.env.VITE_BACKEND_API}/upload`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         },
