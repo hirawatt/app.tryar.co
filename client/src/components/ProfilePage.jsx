@@ -1,9 +1,26 @@
 import { connect } from 'react-redux';
 import NavBar from './NavBar';
+import PropTypes from 'prop-types';
+import axios from 'axios';
 
 
 const ProfilePage = (props) => {
-  /*eslint-disable*/
+
+  //delteUser function
+  const deleteUser = (userId) => {
+    axios.put(`${import.meta.env.VITE_BACKEND_API}/delete-user`, {
+      userId: userId
+    })
+    .then(res => {
+      console.log(res.data);
+      console.log('user deleted');
+    })
+    .catch(err => {
+      console.error(err);
+      console.log('user deletion failed');
+    });
+  }
+
   return (
     <div>
       <NavBar/>
@@ -12,11 +29,11 @@ const ProfilePage = (props) => {
       <div className='flex'>
       <h1 className='w-1/2'> Email</h1> <p className='w-1/2'>{props.user ? props.user.userEmail : 'thekatohome@gmail.com'}</p>
       </div>
-      <p>{props.user ? props.user.userName : null}</p>
+      <p>{props.user ? props.user.userName : 'himanshu'}</p>
+      <button className='mx-auto bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded' /*onClick={() => deleteUser(props.user._id)}*/>Delete</button>
       </div>      
     </div>
   )
-  /*eslint-enable*/
 }
 
 const mapStateToProps = (state) => {
@@ -24,6 +41,15 @@ const mapStateToProps = (state) => {
   return {
     user: state
   }
+};
+
+ProfilePage.propTypes = {
+  user: PropTypes.shape({
+    userImage: PropTypes.string.isRequired,
+    userEmail: PropTypes.string.isRequired,
+    userName: PropTypes.string.isRequired,
+    _id: PropTypes.string.isRequired
+  }).isRequired
 };
 
 const ConnectedProfilePage = connect(mapStateToProps)(ProfilePage);
