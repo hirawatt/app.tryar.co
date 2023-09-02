@@ -25,12 +25,17 @@ const ProfilePage = (props) => {
     <div>
       <NavBar/>
       <div className='flex flex-col items-center'>
-      {<img className='rounded-full w-20' alt="profile" src={props.user ? props.user.userImage : 'https://lh3.googleusercontent.com/a/AAcHTtdJGTM3ndgOrcHC68hCQJLN8PH8HkdPo6b39cGmUcUO=s96-c'}/>}
-      <div className='flex'>
-      <h1 className='w-1/2'> Email</h1> <p className='w-1/2'>{props.user ? props.user.userEmail : 'thekatohome@gmail.com'}</p>
-      </div>
-      <p>{props.user ? props.user.userName : 'himanshu'}</p>
-      <button className='mx-auto bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded' /*onClick={() => deleteUser(props.user._id)}*/>Delete</button>
+        {<img className='rounded-full w-20' alt="profile" src={props.user ? props.user.userImage : 'https://lh3.googleusercontent.com/a/AAcHTtdJGTM3ndgOrcHC68hCQJLN8PH8HkdPo6b39cGmUcUO=s96-c'}/>}
+        <div className='flex'>
+          <h1 className='w-1/2'>Email</h1>
+          <p className='w-1/2'>{props.user ? props.user.userEmail : 'thekatohome@gmail.com'}</p>
+        </div>
+        <p>{props.user ? props.user.userName : 'himanshu'}</p>
+        <div className='flex'>
+          <h1 className='w-1/2'>Premium</h1>
+          <p className='w-1/2'>{props.user ? (props.user.premium ? 'true' : 'false') : 'false,false,false,false'}</p>
+        </div>
+        <button className='mx-auto bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded' /*onClick={() => deleteUser(props.user._id)}*/>Delete</button>
       </div>      
     </div>
   )
@@ -48,6 +53,7 @@ ProfilePage.propTypes = {
     userImage: PropTypes.string.isRequired,
     userEmail: PropTypes.string.isRequired,
     userName: PropTypes.string.isRequired,
+    premium: PropTypes.bool.isRequired,
     _id: PropTypes.string.isRequired
   }).isRequired
 };

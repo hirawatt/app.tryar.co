@@ -63,10 +63,18 @@ const ItemUploadPage = (props) => {
     });
   }
 
+  //check if user is permium or not
+  const userPremiumOrNot = () => {
+    if (props.user.premium || true) {
+      return(<FileUpload />)
+    } 
+    return(<div className='flex justify-center'>upgrade to premium, to add more items</div>)
+  }
+
   return (
     <div className='container-snap'>
       <NavBar />
-      <FileUpload />
+      {userPremiumOrNot()}
       <div className="flex justify-center m-5">
         <Link to="/ar/1">
           <button className="border border-gray-300 text-gray-700 px-4 py-2 rounded focus:outline-none focus:ring-4 focus:ring-blue-300">AR page</button>
@@ -91,7 +99,8 @@ const mapStateToProps = (state) => {
 
 ItemUploadPage.propTypes = {
   user: PropTypes.shape({
-    _id: PropTypes.string.isRequired
+    _id: PropTypes.string.isRequired,
+    premium: PropTypes.bool.isRequired
   }).isRequired
 };
 
