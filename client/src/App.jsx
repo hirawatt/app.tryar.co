@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { connect } from 'react-redux';
-import {Navigate, Routes, Route} from 'react-router-dom';
+import {/*Navigate,*/ Routes, Route} from 'react-router-dom';
 import FrontPage from './components/FrontPage';
 import ConnectedProfilePage from './components/ProfilePage';
 import ConnectedItemUploadPage from './components/ItemUploadPage';
@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 
 function App(props) {
   useEffect(() => {
-    props.fetch_user(); //eslint-disable-line
+    props.fetch_user(); 
   }, [props])
 
   if (props.user === null) {
@@ -52,8 +52,9 @@ const mapStateToProps = (state) => {
 App.propTypes = {
   user: PropTypes.oneOfType([
     PropTypes.object,
-    PropTypes.bool
-  ])
+    PropTypes.bool,
+  ]),
+  fetch_user: PropTypes.func.isRequired
 };
 
 const ConnectedApp = connect(mapStateToProps, mapDispatchToProps)(App);

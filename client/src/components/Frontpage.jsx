@@ -2,9 +2,9 @@ import { connect } from 'react-redux';
 import GoogleButton from './GoogleButton';
 import TryARLogo from '../assets/TryAR-Logo.png';
 import NavBar from './NavBar';
+import PropTypes from 'prop-types';
 
 const Frontpage = (props) => {
-  /*eslint-disable*/
   return (
     <div>
       {props.user ? <NavBar /> : null}
@@ -15,13 +15,19 @@ const Frontpage = (props) => {
       </div>
     </div>
   ) 
-  /*eslint-enable*/
 }
 
 const mapStateToProps = (state) => {
   return {
     user: state
   }
+};
+
+Frontpage.propTypes = {
+  user: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.bool,
+  ])
 };
 
 const ConnectedFrontPage = connect(mapStateToProps)(Frontpage);
