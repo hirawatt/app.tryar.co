@@ -48,8 +48,8 @@ app.use(passport.session());
 app.use('/api', authRoutes);
 app.use('/api', databaseApiRoutes);
 
-app.get('/items', (req, res) => res.redirect(process.env.CLIENT_URI + '/items' || 'https://localhost:3000/items'));
-app.get('/', (req, res) => res.redirect(process.env.CLIENT_URI || 'https://localhost:3000'));
+app.get('/items', (req, res) => res.redirect(process.env.CLIENT_URI + '/items' || 'http://localhost:3000/items'));
+app.get('/', (req, res) => res.redirect(process.env.CLIENT_URI || 'http://localhost:3000'));
 
 //unknown path
 app.use((req, res, next) => {
