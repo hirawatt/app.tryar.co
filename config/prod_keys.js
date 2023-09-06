@@ -3,8 +3,8 @@ module.exports = {
         clientID: process.env.CLIENT_ID,
         clientSecret: process.env.CLIENT_SECRET
     },
-    /*session: {
+    session: {
         cookieKey: process.env.COOKIE_KEY
-    },*/
+    },
     mongoURI: process.env.MONGO_URI
 };
