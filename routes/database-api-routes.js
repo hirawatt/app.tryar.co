@@ -1,5 +1,5 @@
 const router = require('express').Router();
-var mongoose = require('mongoose');
+const mongoose = require('mongoose');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
@@ -14,6 +14,7 @@ const storage = multer.diskStorage({
     destination: async function (req, file, cb) {
         // Create a subfolder path using the userid
         const subfolder = path.join('uploads', req.body.userId);
+
         try {
             // Check if the subfolder exists, if not create it
             await fs.promises.access(subfolder);
@@ -43,25 +44,30 @@ router.post("/upload", upload.fields([{
 }, {
     name: 'modelFile',
     maxCount: 1
-}]), async (req, res, next) => {
-    try {
-        const item = {
-            itemName: req.body.fileName,
-            imgLocation: req.files.imgFile[0].path,
-            modelLocation: req.files.modelFile[0].path,
-        };
-        const itemUpdateResult = await Item.updateOne({
-            userId: req.body.userId
-        }, {
-            $push: {
-                itemArray: item
-            }
+}]), (request, response, next) => {
+    const item = {
+        itemName: request.body.fileName,
+        imgLocation: request.files.imgFile[0].path,
+        modelLocation: request.files.modelFile[0].path,
+    };
+    Item.updateOne({
+        userId: request.body.userId
+    }, {
+        $push: {
+            itemArray: item
+        }
+    }).then(itemUpdateResult => {
+        // Send a success status code and a JSON object with the item details
+        response.status(200).json({
+            message: 'File uploaded successfully'
         });
-        res.send('file uploaded');
-    } catch (err) {
-        const error = new Error('Could not add the item');
-        res.send(error);
-    }
+    }).catch(err => {
+        // Send an error status code and a JSON object with the error message
+        response.status(500).json({
+            message: 'File upload unsuccessful'
+            //error: err.message
+        })
+    })
 });
 
 
