@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { connect } from 'react-redux';
-import {/*Navigate,*/ Routes, Route} from 'react-router-dom';
+import {Navigate, Routes, Route} from 'react-router-dom';
 import FrontPage from './components/FrontPage';
 import ConnectedProfilePage from './components/ProfilePage';
 import ConnectedItemUploadPage from './components/ItemUploadPage';
@@ -17,24 +17,15 @@ function App(props) {
     return <div>Loading...</div>;
   }
 
-  return (
-    <Routes>
-      <Route exact path="/" element={<FrontPage />} />
-      <Route path="/profile" element={<ConnectedProfilePage />} />
-      <Route path="/items" element={<ConnectedItemUploadPage />} />
-      <Route path="/ar/:userId" element={<XrHitModelContainer />} />
-    </Routes>
-  )
-
   //protected routes will uncomment after developing other components
-  /*return (
+  return (
     <Routes>
       <Route exact path="/" element={<FrontPage />} />
       <Route path="/profile" element={props.user ? <ConnectedProfilePage /> : <Navigate to="/" />} />
       <Route path="/items" element={props.user ? <ConnectedItemUploadPage /> : <Navigate to="/" />} />
-      <Route path="/ar/:userId" element={props.user ? <XrHitModelContainer /> : <Navigate to="/" />} />
+      <Route path="/ar/:userId" element={<XrHitModelContainer />} />
     </Routes>
-  )*/
+  )
 }
 
 const mapDispatchToProps = (dispatch) => {
