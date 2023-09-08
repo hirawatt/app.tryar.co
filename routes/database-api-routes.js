@@ -80,10 +80,11 @@ router.get('/get-item/:userId', async function (request, response, next) {
             _id: 0,
             itemArray: 1
         });
-        response.send(res);
+        response.status(200).json(res[0].itemArray);
     } catch (err) {
-        const error = new Error('No Item list found');
-        next(error);
+        response.status(500).json({
+            message: 'No Item list found'
+        })
     }
 });
 

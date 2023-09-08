@@ -8,21 +8,21 @@ import XrHitModelContainer from './components/ar/XrHitModelContainer';
 import { fetchUser } from './store/actions/authActions';
 import PropTypes from 'prop-types';
 
-function App(props) {
+function App({ user, fetch_user }) {
   useEffect(() => {
-    props.fetch_user(); 
-  }, [props])
+    fetch_user(); 
+  }, [fetch_user])
 
-  if (props.user === null) {
+  if (user === null) {
     return <div>Loading...</div>;
   }
-
+  
   //protected routes will uncomment after developing other components
   return (
     <Routes>
       <Route exact path="/" element={<FrontPage />} />
-      <Route path="/profile" element={props.user ? <ConnectedProfilePage /> : <Navigate to="/" />} />
-      <Route path="/items" element={props.user ? <ConnectedItemUploadPage /> : <Navigate to="/" />} />
+      <Route path="/profile" element={user ? <ConnectedProfilePage /> : <Navigate to="/" />} />
+      <Route path="/items" element={user ? <ConnectedItemUploadPage /> : <Navigate to="/" />} />
       <Route path="/ar/:userId" element={<XrHitModelContainer />} />
     </Routes>
   )
