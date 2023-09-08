@@ -1,18 +1,18 @@
+import { useState, useEffect, useCallback } from 'react';
+import { Link } from "react-router-dom";
+import axios from 'axios';
+import { connect } from 'react-redux';
 import Card from './ItemCard';
 import NavBar from './NavBar';
 import FileUpload from './fileUpload/FileUpload';
-import { Link } from "react-router-dom";
-import { useState } from 'react';
-import axios from 'axios';
-import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 const ItemUploadPage = (props) => {
   const [itemArray, setItemArray] = useState([]);
 
   //getItem function
-  const getItem = () => {
-    axios.get(`${import.meta.env.VITE_BACKEND_API}/get-item/${userId}`)
+  const getItem = useCallback(() => {
+    axios.get(`${import.meta.env.VITE_BACKEND_API}/get-item/${props.user._id}`)
     .then(res => {
       setItemArray(res.data);
     })
@@ -20,23 +20,27 @@ const ItemUploadPage = (props) => {
       console.error(err);
       console.log('cant get the item');
     });
-  }
+  }, [props.user._id])
+
+  useEffect(() => {
+    getItem();
+  }, [getItem, props.user._id])
 
   //render itemList
   const itemList = () => {
     const list = itemArray.map((item) =>{
       //created props object to make code more readable
       const cardProps = {
-        itemImg: item.itemArray.imgLocation,
-        itemName: item.itemArray.itemName,
-        itemModel: item.itemArray.modelLocation,
-        itemId: item.itemArray._id,
+        itemImg: item.imgLocation,
+        itemName: item.itemName,
+        itemModel: item.modelLocation,
+        itemId: item._id,
         userId: props.user._id,
         deleteItemFromChild: deleteItem
       };
 
       return(
-        <div key={item.itemArray._id}>
+        <div key={item._id}>
           <Card {...cardProps}/>
         </div>
       );
@@ -54,8 +58,8 @@ const ItemUploadPage = (props) => {
       modelLocation: modelLocation
     })
     .then(res => {
-      console.log(res.data);
-      console.log('item deleted');
+      console.log(res.data.message);
+      getItem();
     })
     .catch(err => {
       console.error(err);
@@ -65,8 +69,8 @@ const ItemUploadPage = (props) => {
 
   //check if user is permium or not
   const userPremiumOrNot = () => {
-    if (props.user.premium || true) {
-      return(<FileUpload />)
+    if (props.user.premium) {
+      return(<FileUpload userId={props.user._id}/>)
     } 
     return(<div className='flex justify-center'>upgrade to premium, to add more items</div>)
   }
@@ -80,12 +84,7 @@ const ItemUploadPage = (props) => {
           <button className="border border-gray-300 text-gray-700 px-4 py-2 rounded focus:outline-none focus:ring-4 focus:ring-blue-300">AR page</button>
         </Link>
       </div>
-      <div>
-        <Card />
-        <Card />
-        <Card />
-        <Card />
-      </div>
+      {itemList()}
     </div>
     
   )

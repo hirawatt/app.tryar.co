@@ -92,7 +92,7 @@ router.get('/get-item/:userId', async function (request, response, next) {
 //delete item from itemArray
 router.put('/delete-item', async function (request, response, next) {
     try {
-        const itemDeleteResult = await Item.updateOne({
+        await Item.updateOne({
             userId: request.body.userId
         }, {
             $pull: {
@@ -122,10 +122,14 @@ router.put('/delete-item', async function (request, response, next) {
             })
         );
 
-        response.send(itemDeleteResult);
+        response.status(200).json({
+            message: 'Item deleted successfully'
+        });
     } catch (err) {
-        const error = new Error('Could not delete the item');
-        next(error);
+        response.status(500).json({
+            message: 'Could not delete the item'
+            //error: err.message
+        })
     }
 });
 
