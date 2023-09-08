@@ -80,7 +80,7 @@ const ItemUploadPage = (props) => {
       <NavBar />
       {userPremiumOrNot()}
       <div className="flex justify-center m-5">
-        <Link to="/ar/1">
+        <Link to={`/ar/${props.user._id}`}>
           <button className="border border-gray-300 text-gray-700 px-4 py-2 rounded focus:outline-none focus:ring-4 focus:ring-blue-300">AR page</button>
         </Link>
       </div>
