@@ -2,19 +2,18 @@ import { Fragment, useState } from 'react';
 import Message from './Message';
 import Progress from './Progress';
 import axios from 'axios';
+import PropTypes from 'prop-types';
 
-const FileUpload = () => {
+const FileUpload = ({ userId }) => {
   const [fileName, setFileName] = useState('');
   const [imgFile, setImgFile] = useState('');
   const [modelFile, setModelFile] = useState('');
-  const [userId, setUserId] = useState('');
   const [message, setMessage] = useState('');
   const [uploadPercentage, setUploadPercentage] = useState(0);
 
 
   const onSubmit = async e => {
     e.preventDefault();
-    setUserId('64e0b2cdce70f7d21c7849b8');
     const formData = new FormData();
     formData.append('userId', userId); //userId to create a sub-folder to save file and save item location in database
     formData.append('fileName', fileName);
@@ -22,7 +21,7 @@ const FileUpload = () => {
     formData.append('modelFile', modelFile);
 
     try {
-      /*const res = */await axios.post(`${import.meta.env.VITE_BACKEND_API}/upload`, formData, {
+      await axios.post(`${import.meta.env.VITE_BACKEND_API}/upload`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         },
@@ -35,13 +34,13 @@ const FileUpload = () => {
         }
       });
 
-      setMessage('File Uploaded');  
+      setMessage('File Uploaded Successfully');  
 
-      // Clear percentage in 3 second
+      // Clear percentage and message in 3 second
       setTimeout(() => {
         setUploadPercentage(0);
         setMessage('');
-      }, 5000);
+      }, 3000);
 
     
     } catch (err) {
@@ -67,12 +66,12 @@ const FileUpload = () => {
         <div className='mx-auto flex flex-col'>
 
           <div className='grid grid-cols-2 p-2'>
-            <label className='custom-file-label' htmlFor='customFile'>
+            <label className='block text-gray-700 text-sm font-bold' htmlFor='fileName'>
               Filename
             </label>
             <input
             type='text'
-            className='custom-file-input border border-gray-400'
+            className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
             id='fileName'
             onChange={e => setFileName(e.target.value)}
             value={fileName}
@@ -81,12 +80,12 @@ const FileUpload = () => {
           </div>
 
           <div className='grid grid-cols-2 p-2'>
-          <label className='custom-file-label' htmlFor='customFile'>
+          <label className='block text-gray-700 text-sm font-bold' htmlFor='imgFile'>
             Choose Image
           </label>
           <input
             type='file'
-            className='custom-file-input'
+            className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
             id='imgFile'
             accept='image/*'
             required
@@ -95,14 +94,14 @@ const FileUpload = () => {
           </div>
 
           <div className='grid grid-cols-2 p-2'>
-          <label className='custom-file-label' htmlFor='customFile'>
+          <label className='block text-gray-700 text-sm font-bold' htmlFor='modelFile'>
             Choose Model
           </label>
           <input
             type='file'
-            className='custom-file-input'
+            className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
             id='modelFile'
-            //accept=".glb"
+            accept=".glb"
             required
             onChange={e => setModelFile(e.target.files[0])}
           />  
@@ -118,16 +117,12 @@ const FileUpload = () => {
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full block w-full mt-4"
         />
       </form>
-      {/*uploadedFile ? (
-        <div className='row mt-5'>
-          <div className='col-md-6 m-auto'>
-            <h3 className='text-center'>{uploadedFile.fileName}</h3>
-            <img style={{ width: '100%' }} src={uploadedFile.filePath} alt='' />
-          </div>
-        </div>
-      ) : null*/}
     </Fragment>
   );
+};
+
+FileUpload.propTypes = {
+  userId: PropTypes.string.isRequired
 };
 
 export default FileUpload;
