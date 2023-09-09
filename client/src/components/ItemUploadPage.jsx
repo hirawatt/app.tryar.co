@@ -70,7 +70,7 @@ const ItemUploadPage = (props) => {
   //check if user is permium or not
   const userPremiumOrNot = () => {
     if (props.user.premium) {
-      return(<FileUpload userId={props.user._id}/>)
+      return(<FileUpload userId={props.user._id} getItemFun={getItem}/>)
     } 
     return(<div className='flex justify-center'>upgrade to premium, to add more items</div>)
   }

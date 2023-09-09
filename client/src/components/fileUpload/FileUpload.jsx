@@ -4,7 +4,7 @@ import Progress from './Progress';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 
-const FileUpload = ({ userId }) => {
+const FileUpload = ({ userId, getItemFun }) => {
   const [fileName, setFileName] = useState('');
   const [imgFile, setImgFile] = useState('');
   const [modelFile, setModelFile] = useState('');
@@ -34,6 +34,7 @@ const FileUpload = ({ userId }) => {
         }
       });
 
+      getItemFun();
       setMessage('File Uploaded Successfully');  
 
       // Clear percentage and message in 3 second
@@ -122,7 +123,8 @@ const FileUpload = ({ userId }) => {
 };
 
 FileUpload.propTypes = {
-  userId: PropTypes.string.isRequired
+  userId: PropTypes.string.isRequired,
+  getItemFun: PropTypes.func.isRequired
 };
 
 export default FileUpload;
