@@ -128,7 +128,6 @@ router.put('/delete-item', async function (request, response, next) {
     } catch (err) {
         response.status(500).json({
             message: 'Could not delete the item'
-            //error: err.message
         })
     }
 });
@@ -137,28 +136,31 @@ router.put('/delete-item', async function (request, response, next) {
 //delete the user
 router.put('/delete-user', async function (request, response, next) {
     try {
-        const userDeleteResult = await User.deleteOne({
-            _id: request.body.userId
-        });
-        const itemDeleteResult = await Item.deleteOne({
-            userId: request.body.userId
-        });
-
         // method to create an absolute path for the folder which needs to be deleted
         const folderToBeDeleted = path.join('uploads', request.body.userId);
 
         // Use the fs.rmdir() method to delete the folder
         await fs.promises.rmdir(folderToBeDeleted, {
-            recursive: true
+            recursive: true //recursive true so that all the files inside folders also get deleted
         });
 
-        response.send({
-            userDeleteResult,
-            itemDeleteResult
+        //removing database entry
+        await User.deleteOne({
+            _id: request.body.userId
+        });
+        await Item.deleteOne({
+            userId: request.body.userId
+        });
+
+        request.session = null; //deleting the cookie
+
+        response.status(200).json({
+            message: 'Account deleted successfully'
         });
     } catch (err) {
-        const error = new Error('Could not delete the user');
-        next(error);
+        response.status(500).json({
+            message: 'Could not delete the user'
+        })
     }
 });
 

@@ -2,6 +2,7 @@ import { connect } from 'react-redux';
 import NavBar from './NavBar';
 import PropTypes from 'prop-types';
 import axios from 'axios';
+import { fetchUser } from '../store/actions/authActions';
 
 
 const ProfilePage = (props) => {
@@ -12,12 +13,11 @@ const ProfilePage = (props) => {
       userId: userId
     })
     .then(res => {
-      console.log(res.data);
-      console.log('user deleted');
+      console.log(res.data.message);
+      props.fetch_user();
     })
     .catch(err => {
-      console.error(err);
-      console.log('user deletion failed');
+      console.log(err.data.message);
     });
   }
 
@@ -35,10 +35,16 @@ const ProfilePage = (props) => {
           <h1 className='w-1/2'>Premium</h1>
           <p className='w-1/2'>{props.user ? (props.user.premium ? 'true' : 'false') : 'false,false,false,false'}</p>
         </div>
-        <button className='mx-auto bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded' /*onClick={() => deleteUser(props.user._id)}*/>Delete</button>
+        <button className='mx-auto bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded' onClick={() => deleteUser(props.user._id)}>Delete</button>
       </div>      
     </div>
   )
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+      fetch_user:() => {dispatch(fetchUser())}
+  }
 }
 
 const mapStateToProps = (state) => {
@@ -55,8 +61,9 @@ ProfilePage.propTypes = {
     userName: PropTypes.string.isRequired,
     premium: PropTypes.bool.isRequired,
     _id: PropTypes.string.isRequired
-  }).isRequired
+  }).isRequired,
+  fetch_user: PropTypes.func.isRequired
 };
 
-const ConnectedProfilePage = connect(mapStateToProps)(ProfilePage);
+const ConnectedProfilePage = connect(mapStateToProps, mapDispatchToProps)(ProfilePage);
 export default ConnectedProfilePage;
