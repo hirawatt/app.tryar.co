@@ -16,11 +16,12 @@ const storage = multer.diskStorage({
         const subfolder = path.join('uploads', req.body.userId);
 
         try {
-            // Check if the subfolder exists, if not create it
-            await fs.promises.access(subfolder);
+            // Check if the subfolder exists, if not create it with recursive option
+            await fs.promises.mkdir(subfolder, {
+                recursive: true
+            });
         } catch (error) {
-            console.log('new directory created');
-            await fs.promises.mkdir(subfolder);
+            console.log(error);
         }
         cb(null, subfolder);
     },
