@@ -1,22 +1,18 @@
 import { OrbitControls } from "@react-three/drei";
-import { useThree } from "@react-three/fiber";
 import { Interactive, useHitTest, useXR } from "@react-three/xr";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Model from "./Model";
+import PropTypes from 'prop-types';
 
-const XrHitModel = () => {
+const XrHitModel = ({ itemModel, showOverlayOrNot }) => {
   const reticleRef = useRef();
-  const [models, setModels] = useState([]);
-
+  const [modelPosition, setModelPosition] = useState([]);
   const { isPresenting } = useXR();
 
-  useThree(({ camera }) => {
-    if (!isPresenting) {
-      camera.position.z = 3;
-    }
-  });
-
-  useHitTest((hitMatrix, hit) => {
+  useEffect(() => showOverlayOrNot(isPresenting), [isPresenting, showOverlayOrNot])
+  
+  //detecting the intersection of a ray with real-world surfaces
+  useHitTest((hitMatrix) => {
     hitMatrix.decompose(
       reticleRef.current.position,
       reticleRef.current.quaternion,
@@ -29,30 +25,41 @@ const XrHitModel = () => {
   const placeModel = (e) => {
     let position = e.intersection.object.position.clone();
     let id = Date.now();
-    setModels([{ position, id }]);
+    setModelPosition([{ position, id }]);
   };
-    /*eslint-disable*/
+    
   return (
     <>
       <OrbitControls />
       <ambientLight />
-      {isPresenting &&
-        models.map(({ position, id }) => {
-          return <Model key={id} position={position} />;
-        })}
+      {isPresenting && 
+      modelPosition.map(({ position, id }) => {
+        return <Model key={id} position={position} itemModel={itemModel} />;
+      })
+      }
       {isPresenting && (
         <Interactive onSelect={placeModel}>
+          {/*eslint-disable*/}
           <mesh ref={reticleRef} rotation-x={-Math.PI / 2}> 
-            <ringGeometry args={[0.15, 0.2, 32]} />
+            <ringGeometry args={[0.15, 0.25, 32]} />
             <meshStandardMaterial color={"white"} />
           </mesh>
+          {/*eslint-enable*/}
         </Interactive>
       )}
 
-      {!isPresenting && <Model />}
+      {/* {isPresentingOrNot(isPresenting)} */}
+
     </>
   );
-   /*eslint-enable*/
+};
+
+XrHitModel.propTypes = {
+  itemModel: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.oneOf([null]),
+  ]),
+  showOverlayOrNot: PropTypes.func.isRequired
 };
 
 export default XrHitModel;
