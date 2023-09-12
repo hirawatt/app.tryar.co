@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import GoogleButton from './GoogleButton';
-import TryARLogo from '../assets/TryAR-Logo.png';
+import TryARLogo from '../assets/tryAR-Logo.png';
 import NavBar from './NavBar';
 import PropTypes from 'prop-types';
 
