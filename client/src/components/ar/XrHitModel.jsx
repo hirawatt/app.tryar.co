@@ -1,12 +1,11 @@
 import { OrbitControls } from "@react-three/drei";
-import { Interactive, useHitTest, useXR } from "@react-three/xr";
-import { useEffect, useRef, useState } from "react";
+import { useHitTest, useInteraction, useXR } from "@react-three/xr";
+import { useEffect, useRef } from "react";
 import Model from "./Model";
 import PropTypes from 'prop-types';
 
-const XrHitModel = ({ itemModel, showOverlayOrNot }) => {
+const XrHitModel = ({ itemModel, showOverlayOrNot, modelPosition, placeModel }) => {
   const reticleRef = useRef();
-  const [modelPosition, setModelPosition] = useState([]);
   const { isPresenting } = useXR();
 
   useEffect(() => showOverlayOrNot(isPresenting), [isPresenting, showOverlayOrNot])
@@ -22,11 +21,7 @@ const XrHitModel = ({ itemModel, showOverlayOrNot }) => {
     reticleRef.current.rotation.set(-Math.PI / 2, 0, 0);
   });
 
-  const placeModel = (e) => {
-    let position = e.intersection.object.position.clone();
-    let id = Date.now();
-    setModelPosition([{ position, id }]);
-  };
+  useInteraction(reticleRef, 'onSelect', (e) => placeModel(e)); //wanted to use this but its not working when testing on webxr api emulator
     
   return (
     <>
@@ -38,18 +33,15 @@ const XrHitModel = ({ itemModel, showOverlayOrNot }) => {
       })
       }
       {isPresenting && (
-        <Interactive onSelect={placeModel}>
+        <>
           {/*eslint-disable*/}
           <mesh ref={reticleRef} rotation-x={-Math.PI / 2}> 
-            <ringGeometry args={[0.15, 0.25, 32]} />
+            <ringGeometry args={[0.15, 0.4, 32]} />
             <meshStandardMaterial color={"white"} />
           </mesh>
           {/*eslint-enable*/}
-        </Interactive>
+        </>
       )}
-
-      {/* {isPresentingOrNot(isPresenting)} */}
-
     </>
   );
 };
@@ -59,7 +51,9 @@ XrHitModel.propTypes = {
     PropTypes.string,
     PropTypes.oneOf([null]),
   ]),
-  showOverlayOrNot: PropTypes.func.isRequired
+  showOverlayOrNot: PropTypes.func.isRequired,
+  modelPosition: PropTypes.array.isRequired,
+  placeModel: PropTypes.func.isRequired
 };
 
 export default XrHitModel;

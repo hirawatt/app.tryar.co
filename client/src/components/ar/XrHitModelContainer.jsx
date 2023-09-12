@@ -8,6 +8,8 @@ import { useParams } from "react-router-dom";
 //import { toggleSession } from '@react-three/xr';
 
 const XrHitModelContainer = () => {
+  let position;
+  let id;
 
   const { userId } = useParams(); // get the shopId from the route params
   const [arSupportedOrNot, setARSupportedOrNot] = useState(false);
@@ -67,6 +69,14 @@ const XrHitModelContainer = () => {
     );
 
   });
+
+  const [modelPosition, setModelPosition] = useState([]);
+
+  //function to place item in XrHitModel.jsx file using PLACE button here
+  const placeModel = (e) => {
+    position = e.intersection.object.position.clone(); //typeOf object
+    id = Date.now(); //typeOf int
+  }
   
   return (
     <div className="h-screen w-screen overflow-x-hidden">
@@ -78,10 +88,10 @@ const XrHitModelContainer = () => {
 
       
       <div ref={divRef} id="overlay-content" className={"flex justify-center absolute bottom-4 left-1/2 transform -translate-x-1/2 " + (showOverlay ? 'block' : 'hidden')}>
-        <button id="my-button" className="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded">PLACE</button>
-        <button id="my-button" className="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded">EXIT AR</button>
+        <button id="my-button" className="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded h-16" onClick={() => {setModelPosition([{ position, id }]);}}>PLACE</button>
+        <button id="my-button" className="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded h-16">EXIT AR</button>
       </div>
-
+      {/*need to give element's ref to domOverlay instead of id*/}
       <ARButton
       sessionInit={{ 
         requiredFeatures: ["hit-test"],
@@ -90,9 +100,10 @@ const XrHitModelContainer = () => {
       }}
       />
     
+    {/*xr props doesn't work, when canvas is not rendered or canvas display is hidden/none or if canvas has height and width 0*/}
     <Canvas style={showCanvas ? {opacity: 1, visibility: "visible", position: "static", left: 0} : {opacity: 0, visibility: "hidden", position: "absolute", left: "-100%"}}>
       <XR onSessionStart={() => setShowCanvas(true)} onSessionEnd={() => setShowCanvas(false)}>
-        <XrHitModel itemModel={itemModel} showOverlayOrNot={showOverlayOrNotFun}/>
+        <XrHitModel itemModel={itemModel} showOverlayOrNot={showOverlayOrNotFun} placeModel={placeModel} modelPosition={modelPosition}/>
       </XR>
     </Canvas>
 
