@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 import { connect } from 'react-redux';
 import {Navigate, Routes, Route} from 'react-router-dom';
-import FrontPage from './components/FrontPage';
-import ConnectedProfilePage from './components/ProfilePage';
-import ConnectedItemUploadPage from './components/ItemUploadPage';
+import FrontPage from './components/home';
+import ConnectedProfilePage from './components/profile';
+import ConnectedItemUploadPage from './components/items';
 import XrHitModelContainer from './components/ar/XrHitModelContainer';
 import { fetchUser } from './store/actions/authActions';
 import PropTypes from 'prop-types';

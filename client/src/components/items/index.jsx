@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 import axios from 'axios';
 import { connect } from 'react-redux';
 import Card from './ItemCard';
-import NavBar from './NavBar';
-import FileUpload from './fileUpload/FileUpload';
+import NavBar from '../navbar/NavBar';
+import FileUpload from './FileUpload';
 import PropTypes from 'prop-types';
 
 const ItemUploadPage = (props) => {

@@ -1,11 +1,14 @@
+import { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import NavBar from './NavBar';
+import NavBar from '../navbar/NavBar';
 import PropTypes from 'prop-types';
 import axios from 'axios';
-import { fetchUser } from '../store/actions/authActions';
+import { fetchUser } from '../../store/actions/authActions';
 
 
 const ProfilePage = (props) => {
+
+  const [modalOpen, setModalOpen] = useState(false);
 
   //delteUser function
   const deleteUser = (userId) => {
@@ -21,6 +24,10 @@ const ProfilePage = (props) => {
     });
   }
 
+  useEffect(() => {
+    console.log('Getting Rendered');
+  }, [])
+
   return (
     <div>
       <NavBar/>
@@ -35,7 +42,14 @@ const ProfilePage = (props) => {
           <h1 className='w-1/2'>Premium</h1>
           <p className='w-1/2'>{props.user ? (props.user.premium ? 'true' : 'false') : 'false,false,false,false'}</p>
         </div>
-        <button className='mx-auto bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded' onClick={() => deleteUser(props.user._id)}>Delete</button>
+        <button className='mx-auto bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded' onClick={() => setModalOpen(true)}>Delete</button>
+        {modalOpen && <div className='fixed items-center justify-center h-screen'>
+          <div className='h-28 w-40 rounded-sm bg-slate-400'>
+            <button onClick={() => setModalOpen(false)}>X</button>
+            <button onClick={() => setModalOpen(false)}>Delete</button>
+            <button onClick={() => setModalOpen(false)}>Cancel</button>
+          </div>
+        </div>}
       </div>      
     </div>
   )
