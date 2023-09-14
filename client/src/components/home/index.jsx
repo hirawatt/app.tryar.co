@@ -1,12 +1,7 @@
 import { connect } from 'react-redux';
 import GoogleButton from './GoogleButton';
-<<<<<<< HEAD:client/src/components/Frontpage.jsx
-import TryARLogo from '../assets/tryAR-Logo.png';
-import NavBar from './NavBar';
-=======
 import TryARLogo from '../../assets/TryAR-Logo.png';
 import NavBar from '../navbar/NavBar';
->>>>>>> 7c0dc4a5a59e507efe2e5a579cf50dd80284af98:client/src/components/home/index.jsx
 import PropTypes from 'prop-types';
 
 const Frontpage = (props) => {
