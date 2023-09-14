@@ -1,4 +1,4 @@
-import TryARLogo from '../assets/tryAR-logo.png';
+import TryARLogo from '../../assets/tryAR-logo.png';
 import PropTypes from 'prop-types';
 
 // Define a Card component that takes props for image and text
