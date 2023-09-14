@@ -21,7 +21,7 @@ const XrHitModel = ({ itemModel, showOverlayOrNot, modelPosition, placeModel }) 
     reticleRef.current.rotation.set(-Math.PI / 2, 0, 0);
   });
 
-  useInteraction(reticleRef, 'onSelect', (e) => placeModel(e)); //wanted to use this but its not working when testing on webxr api emulator
+  useInteraction(reticleRef, 'onMove', (e) => placeModel(e)); //wanted to use this but its not working when testing on webxr api emulator
     
   return (
     <>

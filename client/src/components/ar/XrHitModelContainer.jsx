@@ -9,7 +9,7 @@ import { useParams } from "react-router-dom";
 
 const XrHitModelContainer = () => {
   let position;
-  let id;
+  let id = Date.now(); //typeOf int;
   const { userId } = useParams(); // get the shopId from the route params
   const divRef = useRef(); //overlay element/div ref
 
@@ -38,7 +38,6 @@ const XrHitModelContainer = () => {
       console.log(session.domOverlayState)
     });*/
   }, [])
-
 
   //fetching data from db
   useEffect(() => {
@@ -72,7 +71,6 @@ const XrHitModelContainer = () => {
   //function to place item in XrHitModel.jsx file using PLACE button here
   const placeModel = (e) => {
     position = e.intersection.object.position.clone(); //typeOf object
-    id = Date.now(); //typeOf int
   }
   
   //element variable for conditionally rendering if ar supported

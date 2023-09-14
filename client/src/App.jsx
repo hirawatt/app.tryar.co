@@ -10,14 +10,14 @@ const ConnectedItemUploadPage = lazy(() => import('./components/items'))
 const XrHitModelContainer = lazy(() => import('./components/ar/XrHitModelContainer'))
 
 //custom functional component for using suspense with imported component
-const ComponentWithSuspense = ({ Component }) => (
+const ComponentWithSuspense = ({ component: Component }) => (
   <Suspense fallback={<div>Loading...</div>}>
     <Component />
   </Suspense>
 );
 
 ComponentWithSuspense.propTypes = {
-  Component: PropTypes.elementType.isRequired
+  component: PropTypes.elementType.isRequired
 };
 
 function App({ user, fetch_user }) {
@@ -28,13 +28,13 @@ function App({ user, fetch_user }) {
 
   if (user === null) { return <div>Loading...</div> }
   
-  //protected routes will uncomment after developing other components
+  //protected routes
   return (
     <Routes>
-      <Route exact path="/" element={<ComponentWithSuspense Component={FrontPage} />} />
-      <Route path="/profile" element={user ? <ComponentWithSuspense Component={ConnectedProfilePage} /> : <Navigate to="/" />} />
-      <Route path="/items" element={user ? <ComponentWithSuspense Component={ConnectedItemUploadPage} /> : <Navigate to="/" />} />
-      <Route path="/ar/:userId" element={<ComponentWithSuspense Component={XrHitModelContainer} />} />
+      <Route exact path="/" element={<ComponentWithSuspense component={FrontPage} />} />
+      <Route path="/profile" element={user ? <ComponentWithSuspense component={ConnectedProfilePage} /> : <Navigate to="/" />} />
+      <Route path="/items" element={user ? <ComponentWithSuspense component={ConnectedItemUploadPage} /> : <Navigate to="/" />} />
+      <Route path="/ar/:userId" element={<ComponentWithSuspense component={XrHitModelContainer} />} />
     </Routes>
   )
 }
