@@ -1,12 +1,24 @@
-import { useEffect } from 'react';
+import { useEffect, lazy, Suspense } from 'react';
 import { connect } from 'react-redux';
 import { Navigate, Routes, Route } from 'react-router-dom';
 import { fetchUser } from './store/actions/authActions';
-import FrontPage from './components/home';
-import ConnectedProfilePage from './components/profile';
-import ConnectedItemUploadPage from './components/items';
-import XrHitModelContainer from './components/ar/XrHitModelContainer';
 import PropTypes from 'prop-types';
+
+const FrontPage = lazy(() => import('./components/home'))
+const ConnectedProfilePage = lazy(() => import('./components/profile'))
+const ConnectedItemUploadPage = lazy(() => import('./components/items'))
+const XrHitModelContainer = lazy(() => import('./components/ar/XrHitModelContainer'))
+
+//custom functional component for using suspense with imported component
+const ComponentWithSuspense = ({ Component }) => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <Component />
+  </Suspense>
+);
+
+ComponentWithSuspense.propTypes = {
+  Component: PropTypes.elementType.isRequired
+};
 
 function App({ user, fetch_user }) {
   
@@ -19,10 +31,10 @@ function App({ user, fetch_user }) {
   //protected routes will uncomment after developing other components
   return (
     <Routes>
-      <Route exact path="/" element={<FrontPage />} />
-      <Route path="/profile" element={user ? <ConnectedProfilePage /> : <Navigate to="/" />} />
-      <Route path="/items" element={user ? <ConnectedItemUploadPage /> : <Navigate to="/" />} />
-      <Route path="/ar/:userId" element={<XrHitModelContainer />} />
+      <Route exact path="/" element={<ComponentWithSuspense Component={FrontPage} />} />
+      <Route path="/profile" element={user ? <ComponentWithSuspense Component={ConnectedProfilePage} /> : <Navigate to="/" />} />
+      <Route path="/items" element={user ? <ComponentWithSuspense Component={ConnectedItemUploadPage} /> : <Navigate to="/" />} />
+      <Route path="/ar/:userId" element={<ComponentWithSuspense Component={XrHitModelContainer} />} />
     </Routes>
   )
 }
