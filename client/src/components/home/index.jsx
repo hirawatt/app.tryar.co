@@ -1,27 +1,23 @@
 import { connect } from 'react-redux';
 import GoogleButton from './GoogleButton';
-import TryARLogo from '../../assets/TryAR-Logo.png';
+import TryARLogo from '../../assets/tryAR-Logo.png';
 import NavBar from '../navbar/NavBar';
 import PropTypes from 'prop-types';
 
-const Frontpage = (props) => {
+const Frontpage = ({ user }) => {
   return (
     <div>
-      {props.user ? <NavBar /> : null}
+      {user ? <NavBar /> : null}
       <div className='flex flex-col items-center justify-center h-screen'>
       <img className='h-56' src={TryARLogo} alt="TryAR logo"/>
       <h1 className='text-center'>Plug & Play <br/>Augmented Reality App</h1>
-      {props.user ? null : <GoogleButton/>} 
+      {user ? null : <GoogleButton/>} 
       </div>
     </div>
   ) 
 }
 
-const mapStateToProps = (state) => {
-  return {
-    user: state
-  }
-};
+const mapStateToProps = (state) => ({ user: state });
 
 Frontpage.propTypes = {
   user: PropTypes.oneOfType([

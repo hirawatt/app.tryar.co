@@ -63,7 +63,7 @@ const XrHitModelContainer = () => {
   }
 
   //render itemList element
-  const itemList = state.itemArray.map(({imgLocation, itemName, _id, modelLocation}) =>(
+  const itemList = state.itemArray.map(({imgLocation, itemName, _id, modelLocation}) => (
     <div className='cursor-pointer' key={_id} onClick={() => handleItemSelection(modelLocation)}>
       <ItemCardForAR {...{imgLocation, itemName}}/>
     </div>

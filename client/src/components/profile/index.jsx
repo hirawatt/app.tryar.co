@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { connect } from 'react-redux';
+import { fetchUser } from '../../store/actions/authActions';
+import axios from 'axios';
 import NavBar from '../navbar/NavBar';
 import PropTypes from 'prop-types';
-import axios from 'axios';
-import { fetchUser } from '../../store/actions/authActions';
 
 
-const ProfilePage = (props) => {
+const ProfilePage = ({ user, fetch_user }) => {
 
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -17,30 +17,26 @@ const ProfilePage = (props) => {
     })
     .then(res => {
       console.log(res.data.message);
-      props.fetch_user();
+      fetch_user();
     })
     .catch(err => {
       console.log(err.data.message);
     });
   }
 
-  useEffect(() => {
-    console.log('Getting Rendered');
-  }, [])
-
   return (
     <div>
       <NavBar/>
       <div className='flex flex-col items-center'>
-        {<img className='rounded-full w-20' alt="profile" src={props.user ? props.user.userImage : 'https://lh3.googleusercontent.com/a/AAcHTtdJGTM3ndgOrcHC68hCQJLN8PH8HkdPo6b39cGmUcUO=s96-c'}/>}
+        {<img className='rounded-full w-20' alt="profile" src={user ? user.userImage : 'https://lh3.googleusercontent.com/a/AAcHTtdJGTM3ndgOrcHC68hCQJLN8PH8HkdPo6b39cGmUcUO=s96-c'}/>}
         <div className='flex'>
           <h1 className='w-1/2'>Email</h1>
-          <p className='w-1/2'>{props.user ? props.user.userEmail : 'thekatohome@gmail.com'}</p>
+          <p className='w-1/2'>{user ? user.userEmail : 'thekatohome@gmail.com'}</p>
         </div>
-        <p>{props.user ? props.user.userName : 'himanshu'}</p>
+        <p>{user ? user.userName : 'himanshu'}</p>
         <div className='flex'>
           <h1 className='w-1/2'>Premium</h1>
-          <p className='w-1/2'>{props.user ? (props.user.premium ? 'true' : 'false') : 'false,false,false,false'}</p>
+          <p className='w-1/2'>{user ? (user.premium ? 'true' : 'false') : 'false,false,false,false'}</p>
         </div>
         <button className='mx-auto bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded' onClick={() => setModalOpen(true)}>Delete</button>
         {modalOpen && <div className='fixed items-center justify-center h-screen'>
@@ -55,18 +51,9 @@ const ProfilePage = (props) => {
   )
 }
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-      fetch_user:() => {dispatch(fetchUser())}
-  }
-}
+const mapDispatchToProps = (dispatch) => ({ fetch_user:() => {dispatch(fetchUser())} })
 
-const mapStateToProps = (state) => {
-  //console.log(state);
-  return {
-    user: state
-  }
-};
+const mapStateToProps = (state) => ({ user: state })
 
 ProfilePage.propTypes = {
   user: PropTypes.shape({

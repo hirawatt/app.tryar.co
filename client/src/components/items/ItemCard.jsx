@@ -13,13 +13,14 @@ const Card = ({ itemImg, itemName, itemModel, itemId, userId, deleteItemFromChil
   );
 }
 
+const { string, func } = PropTypes;
 Card.propTypes = {
-  itemImg: PropTypes.string.isRequired,
-  itemName: PropTypes.string.isRequired,
-  itemModel: PropTypes.string.isRequired,
-  itemId: PropTypes.string.isRequired,
-  userId: PropTypes.string.isRequired,
-  deleteItemFromChild: PropTypes.func.isRequired
+  itemImg:string.isRequired,
+  itemName: string.isRequired,
+  itemModel: string.isRequired,
+  itemId: string.isRequired,
+  userId: string.isRequired,
+  deleteItemFromChild: func.isRequired
 };
 
 export default Card;

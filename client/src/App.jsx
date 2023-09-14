@@ -1,21 +1,20 @@
 import { useEffect } from 'react';
 import { connect } from 'react-redux';
-import {Navigate, Routes, Route} from 'react-router-dom';
+import { Navigate, Routes, Route } from 'react-router-dom';
+import { fetchUser } from './store/actions/authActions';
 import FrontPage from './components/home';
 import ConnectedProfilePage from './components/profile';
 import ConnectedItemUploadPage from './components/items';
 import XrHitModelContainer from './components/ar/XrHitModelContainer';
-import { fetchUser } from './store/actions/authActions';
 import PropTypes from 'prop-types';
 
 function App({ user, fetch_user }) {
+  
   useEffect(() => {
     fetch_user(); 
   }, [fetch_user])
 
-  if (user === null) {
-    return <div>Loading...</div>;
-  }
+  if (user === null) { return <div>Loading...</div> }
   
   //protected routes will uncomment after developing other components
   return (
@@ -28,17 +27,9 @@ function App({ user, fetch_user }) {
   )
 }
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-      fetch_user:() => {dispatch(fetchUser())}
-  }
-}
+const mapDispatchToProps = (dispatch) => ({ fetch_user:() => dispatch(fetchUser()) })
 
-const mapStateToProps = (state) => {
-  return {
-    user: state
-  }
-};
+const mapStateToProps = (state) => ({ user: state })
 
 App.propTypes = {
   user: PropTypes.oneOfType([

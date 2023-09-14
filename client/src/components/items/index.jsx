@@ -1,18 +1,18 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from "react-router-dom";
-import axios from 'axios';
 import { connect } from 'react-redux';
+import axios from 'axios';
 import Card from './ItemCard';
 import NavBar from '../navbar/NavBar';
 import FileUpload from './FileUpload';
 import PropTypes from 'prop-types';
 
-const ItemUploadPage = (props) => {
+const ItemUploadPage = ({ user }) => {
   const [itemArray, setItemArray] = useState([]);
 
   //getItem function
   const getItem = useCallback(() => {
-    axios.get(`${import.meta.env.VITE_BACKEND_API}/get-item/${props.user._id}`)
+    axios.get(`${import.meta.env.VITE_BACKEND_API}/get-item/${user._id}`)
     .then(res => {
       setItemArray(res.data);
     })
@@ -20,34 +20,9 @@ const ItemUploadPage = (props) => {
       console.error(err);
       console.log('cant get the item');
     });
-  }, [props.user._id])
+  }, [user._id])
 
-  useEffect(() => {
-    getItem();
-  }, [getItem, props.user._id])
-
-  //render itemList
-  const itemList = () => {
-    const list = itemArray.map((item) =>{
-      //created props object to make code more readable
-      const cardProps = {
-        itemImg: item.imgLocation,
-        itemName: item.itemName,
-        itemModel: item.modelLocation,
-        itemId: item._id,
-        userId: props.user._id,
-        deleteItemFromChild: deleteItem
-      };
-
-      return(
-        <div key={item._id}>
-          <Card {...cardProps}/>
-        </div>
-      );
-  
-    });
-    return (list);
-  }
+  useEffect(() => { getItem() }, [getItem, user._id])
 
   //delteItem function
   const deleteItem = (userId, itemId, imgLocation, modelLocation) => {
@@ -67,34 +42,49 @@ const ItemUploadPage = (props) => {
     });
   }
 
+  //render itemList
+  const itemList = itemArray.map((item) => {
+    //created props object to make code more readable
+    const cardProps = {
+      itemImg: item.imgLocation,
+      itemName: item.itemName,
+      itemModel: item.modelLocation,
+      itemId: item._id,
+      userId: user._id,
+      deleteItemFromChild: deleteItem
+    };
+
+    return(
+      <div key={item._id}>
+        <Card {...cardProps}/>
+      </div>
+    );
+
+  });
+
   //check if user is permium or not
-  const userPremiumOrNot = () => {
-    if (props.user.premium) {
-      return(<FileUpload userId={props.user._id} getItemFun={getItem}/>)
-    } 
-    return(<div className='flex justify-center'>upgrade to premium, to add more items</div>)
-  }
+  const userPremiumOrNot = (user.premium
+  ? <FileUpload userId={user._id} getItemFun={getItem}/>
+  : <div className='flex justify-center'>upgrade to premium, to add more items</div>
+  )
+
 
   return (
     <div className='container-snap'>
       <NavBar />
-      {userPremiumOrNot()}
+      {userPremiumOrNot}
       <div className="flex justify-center m-5">
-        <Link to={`/ar/${props.user._id}`}>
+        <Link to={`/ar/${user._id}`}>
           <button className="border border-gray-300 text-gray-700 px-4 py-2 rounded focus:outline-none focus:ring-4 focus:ring-blue-300">AR page</button>
         </Link>
       </div>
-      {itemList()}
-    </div>
-    
+      {itemList}
+    </div> 
   )
+
 }
 
-const mapStateToProps = (state) => {
-  return {
-    user: state
-  }
-};
+const mapStateToProps = (state) => ({ user: state })
 
 ItemUploadPage.propTypes = {
   user: PropTypes.shape({
