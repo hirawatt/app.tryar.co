@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { Canvas } from "@react-three/fiber";
 import { ARButton, XR } from "@react-three/xr";
 import XrHitModel from "./XrHitModel";
@@ -8,18 +8,13 @@ import { useParams } from "react-router-dom";
 //import { toggleSession } from '@react-three/xr';
 
 const XrHitModelContainer = () => {
-  let position;
-  let id = Date.now(); //typeOf int;
   const { userId } = useParams(); // get the shopId from the route params
-  const divRef = useRef(); //overlay element/div ref
 
   const [state, setState] = useState({
     arSupportedOrNot: false,
     itemArray: [],
     itemModel: '', //itemModel state to pass it as prop to XrHitModel component
-    showOverlay: false,
-    showCanvas: false,
-    modelPosition: [] //model position in real time in ar
+    sessionActive: false,
   });
 
   //chekc for ar support
@@ -52,9 +47,6 @@ const XrHitModelContainer = () => {
     });
   }, [userId]);
 
-  //callback function to get isPresenting value from useXR hook from child component
-  const showOverlayOrNotFun = useCallback((value) => setState(pervState => ({...pervState, showOverlay: value})), [])
-
   //handel click on item card to open ar/custom ar button
   const  handleItemSelection = /*async*/(itemModel) => {
     setState({...state, itemModel: itemModel});
@@ -67,33 +59,20 @@ const XrHitModelContainer = () => {
       <ItemCardForAR {...{imgLocation, itemName}}/>
     </div>
   ));
-
-  //function to place item in XrHitModel.jsx file using PLACE button here
-  const placeModel = (e) => {
-    position = e.intersection.object.position.clone(); //typeOf object
-  }
   
   //element variable for conditionally rendering if ar supported
   const renderIfArSupported = (
     <>
-    <div ref={divRef} id="overlay-content" className={"flex justify-center absolute bottom-4 left-1/2 transform -translate-x-1/2 " + (state.showOverlay ? 'block' : 'hidden')}>
-      <button className="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded h-16" onClick={() => {setState({...state, modelPosition: [{ position, id }]})}}>PLACE</button>
-      <button className="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded h-16">EXIT AR</button>
-    </div>
-    
-    {/*need to give element's ref to domOverlay instead of id*/}
     <ARButton
     sessionInit={{ 
-      requiredFeatures: ["hit-test"],
-      optionalFeatures: ["dom-overlay"],
-      domOverlay: {root: divRef.current} 
+      requiredFeatures: ["hit-test"]
     }}
     />
     
     {/* xr props doesn't work, when canvas is not rendered or canvas display is hidden/none or if canvas has height and width 0 */}
-    <Canvas style={state.showCanvas ? {opacity: 1, visibility: "visible", position: "static", left: 0} : {opacity: 0, visibility: "hidden", position: "absolute", left: "-100%"}}>
-      <XR onSessionStart={() => setState({...state, showCanvas: true})} onSessionEnd={() => setState({...state, showCanvas: false})}>
-        <XrHitModel itemModel={state.itemModel} showOverlayOrNot={showOverlayOrNotFun} placeModel={placeModel} modelPosition={state.modelPosition}/>
+    <Canvas style={state.sessionActive ? {position: "static", left: 0} : {position: "absolute", left: "-100%"}}>
+      <XR onSessionStart={() => setState({...state, sessionActive: true})} onSessionEnd={() => setState({...state, sessionActive: false})}>
+        <XrHitModel itemModel={state.itemModel}/>
       </XR>
     </Canvas>
     </>
@@ -101,13 +80,10 @@ const XrHitModelContainer = () => {
 
   return (
     <div className="h-screen w-screen overflow-x-hidden">
-      
       <div className='grid md:grid-cols-3'>
         {itemList}
       </div>
-
       {state.arSupportedOrNot ? renderIfArSupported : <p>Ar not supported</p>}
-
     </div>
   );
 };
