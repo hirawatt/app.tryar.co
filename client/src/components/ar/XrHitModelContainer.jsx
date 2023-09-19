@@ -1,22 +1,25 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Canvas } from "@react-three/fiber";
 import { ARButton, XR } from "@react-three/xr";
-import ForwardedXrHitModel from "./XrHitModel";
+import XrHitModel from "./XrHitModel";
 import ItemCardForAR from "./ItemCardForAR";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 //import { toggleSession } from '@react-three/xr';
 
 const XrHitModelContainer = () => {
+  let position;
+  let id = Date.now(); //typeOf int;
   const { userId } = useParams(); // get the shopId from the route params
   const divRef = useRef(); //overlay element/div ref
-  const xrHitModelRef = useRef(null);
 
   const [state, setState] = useState({
     arSupportedOrNot: false,
     itemArray: [],
     itemModel: '', //itemModel state to pass it as prop to XrHitModel component
-    sessionActive: false,
+    showOverlay: false,
+    showCanvas: false,
+    modelPosition: [] //model position in real time in ar
   });
 
   //chekc for ar support
@@ -49,6 +52,9 @@ const XrHitModelContainer = () => {
     });
   }, [userId]);
 
+  //callback function to get isPresenting value from useXR hook from child component
+  const showOverlayOrNotFun = useCallback((value) => setState(pervState => ({...pervState, showOverlay: value})), [])
+
   //handel click on item card to open ar/custom ar button
   const  handleItemSelection = /*async*/(itemModel) => {
     setState({...state, itemModel: itemModel});
@@ -61,31 +67,33 @@ const XrHitModelContainer = () => {
       <ItemCardForAR {...{imgLocation, itemName}}/>
     </div>
   ));
+
+  //function to place item in XrHitModel.jsx file using PLACE button here
+  const placeModel = (e) => {
+    position = e.intersection.object.position.clone(); //typeOf object
+  }
   
   //element variable for conditionally rendering if ar supported
   const renderIfArSupported = (
     <>
-    <div ref={divRef} id="overlay-content" className={"flex justify-center absolute bottom-4 left-1/2 transform -translate-x-1/2 " + (state.sessionActive ? 'block' : 'hidden')}>
-      <button className="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded h-16" onClick={() => xrHitModelRef.current.placeModel()}>PLACE</button>
-      {/* <button className="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded h-16">EXIT AR</button> */}
+    <div ref={divRef} id="overlay-content" className={"flex justify-center absolute bottom-4 left-1/2 transform -translate-x-1/2 " + (state.showOverlay ? 'block' : 'hidden')}>
+      <button className="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded h-16" onClick={() => {setState({...state, modelPosition: [{ position, id }]})}}>PLACE</button>
+      <button className="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded h-16">EXIT AR</button>
     </div>
     
     {/*need to give element's ref to domOverlay instead of id*/}
     <ARButton
     sessionInit={{ 
       requiredFeatures: ["hit-test"],
-      optionalFeatures: ["dom-overlay", 'local-floor'],
+      optionalFeatures: ["dom-overlay"],
       domOverlay: {root: divRef.current} 
     }}
     />
     
     {/* xr props doesn't work, when canvas is not rendered or canvas display is hidden/none or if canvas has height and width 0 */}
-    <Canvas style={state.sessionActive ? {position: "static", left: 0} : {position: "absolute", left: "-100%"}}>
-      <XR 
-      referenceSpace="local-floor"
-      onSessionStart={() => setState({...state, sessionActive: true})} 
-      onSessionEnd={() => setState({...state, sessionActive: false})}>
-        <ForwardedXrHitModel itemModel={state.itemModel} ref={xrHitModelRef}/>
+    <Canvas style={state.showCanvas ? {opacity: 1, visibility: "visible", position: "static", left: 0} : {opacity: 0, visibility: "hidden", position: "absolute", left: "-100%"}}>
+      <XR onSessionStart={() => setState({...state, showCanvas: true})} onSessionEnd={() => setState({...state, showCanvas: false})}>
+        <XrHitModel itemModel={state.itemModel} showOverlayOrNot={showOverlayOrNotFun} placeModel={placeModel} modelPosition={state.modelPosition}/>
       </XR>
     </Canvas>
     </>

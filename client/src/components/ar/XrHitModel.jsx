@@ -1,45 +1,27 @@
 import { OrbitControls } from "@react-three/drei";
-import { Interactive, useHitTest, useXR } from "@react-three/xr";
-import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from "react";
+import { useHitTest, useInteraction, useXR } from "@react-three/xr";
+import { useEffect, useRef } from "react";
 import Model from "./Model";
 import PropTypes from 'prop-types';
 
-const XrHitModel = ({ itemModel }, ref) => { //eslint-disable-line
+const XrHitModel = ({ itemModel, showOverlayOrNot, modelPosition, placeModel }) => {
   const reticleRef = useRef();
-  const { isPresenting, referenceSpace } = useXR();
-  const [modelPosition, setModelPosition] = useState([]);
+  const { isPresenting } = useXR();
 
-  const placeModel = useCallback(() => {
-    if(reticleRef.current) {
-      let position = reticleRef.current.position.clone();
-      //let position = e.intersection.object.position.clone();
-      let id = Date.now();
-      console.log(referenceSpace, position, id);
-      setModelPosition([{ position, id }]);
-    }
-  }, [referenceSpace])
-
-  useImperativeHandle(ref, () => {
-    return {
-      placeModel: placeModel
-    }
-  }, [placeModel])
-
+  useEffect(() => showOverlayOrNot(isPresenting), [isPresenting, showOverlayOrNot])
+  
   //detecting the intersection of a ray with real-world surfaces
   useHitTest((hitMatrix) => {
-    if (reticleRef.current) {
-      hitMatrix.decompose(
-        reticleRef.current.position,
-        reticleRef.current.quaternion,
-        reticleRef.current.scale
-      );
-  
-      reticleRef.current.rotation.set(-Math.PI / 2, 0, 0);
-    }
+    hitMatrix.decompose(
+      reticleRef.current.position,
+      reticleRef.current.quaternion,
+      reticleRef.current.scale
+    );
+
+    reticleRef.current.rotation.set(-Math.PI / 2, 0, 0);
   });
 
-  //wanted to use this but its not working, and 'onMove' is not what expected
-  //useInteraction(reticleRef, 'onSelect', (e) => placeModel(e));
+  useInteraction(reticleRef, 'onMove', (e) => placeModel(e)); //wanted to use this but its not working when testing on webxr api emulator
     
   return (
     <>
@@ -51,27 +33,27 @@ const XrHitModel = ({ itemModel }, ref) => { //eslint-disable-line
       })
       }
       {isPresenting && (
-        <Interactive onSelect={placeModel}>
+        <>
           {/*eslint-disable*/}
           <mesh ref={reticleRef} rotation-x={-Math.PI / 2}> 
             <ringGeometry args={[0.15, 0.4, 32]} />
             <meshStandardMaterial color={"white"} />
           </mesh>
           {/*eslint-enable*/}
-        </Interactive>
+        </>
       )}
     </>
   );
 };
 
-const ForwardedXrHitModel = forwardRef(XrHitModel);
-ForwardedXrHitModel.displayName = 'XrHitModel';
-
-ForwardedXrHitModel.propTypes = {
+XrHitModel.propTypes = {
   itemModel: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.oneOf([null]),
-  ])
+  ]),
+  showOverlayOrNot: PropTypes.func.isRequired,
+  modelPosition: PropTypes.array.isRequired,
+  placeModel: PropTypes.func.isRequired
 };
 
-export default ForwardedXrHitModel;
+export default XrHitModel;
