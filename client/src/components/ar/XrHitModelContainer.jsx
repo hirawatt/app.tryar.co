@@ -70,8 +70,12 @@ const XrHitModelContainer = () => {
     />
     
     {/* xr props doesn't work, when canvas is not rendered or canvas display is hidden/none or if canvas has height and width 0 */}
-    <Canvas style={state.sessionActive ? {position: "static", left: 0} : {position: "absolute", left: "-100%"}}>
-      <XR onSessionStart={() => setState({...state, sessionActive: true})} onSessionEnd={() => setState({...state, sessionActive: false})}>
+    <Canvas 
+    style={state.sessionActive ? {position: "static", left: 0} : {position: "absolute", left: "-100%"}}>
+      <XR 
+      referenceSpace="local-floor"
+      onSessionStart={() => setState({...state, sessionActive: true})} 
+      onSessionEnd={() => setState({...state, sessionActive: false})}>
         <XrHitModel itemModel={state.itemModel}/>
       </XR>
     </Canvas>

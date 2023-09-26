@@ -1,4 +1,3 @@
-import { OrbitControls } from "@react-three/drei";
 import { Interactive, useHitTest, useXR } from "@react-three/xr";
 import { useRef, useState } from "react";
 import Model from "./Model";
@@ -6,9 +5,10 @@ import PropTypes from 'prop-types';
 
 const XrHitModel = ({ itemModel }) => {
   const reticleRef = useRef(null);
-  const { isPresenting } = useXR();
+  const isPresenting = useXR(state => state.isPresenting);
+  const referenceSpace = useXR(state => state.referenceSpace);
   const [modelPosition, setModelPosition] = useState([]);
-  
+
   //detecting the intersection of a ray with real-world surfaces
   useHitTest((hitMatrix) => {
     hitMatrix.decompose(
@@ -16,9 +16,9 @@ const XrHitModel = ({ itemModel }) => {
       reticleRef.current.quaternion,
       reticleRef.current.scale
     );
-
+  
     reticleRef.current.rotation.set(-Math.PI / 2, 0, 0);
-  });
+  }, referenceSpace);
     
   const placeModel = (e) => {
     let position = e.intersection.object.position.clone();
@@ -28,7 +28,6 @@ const XrHitModel = ({ itemModel }) => {
 
   return (
     <>
-      <OrbitControls />
       <ambientLight />
       {isPresenting && 
       modelPosition.map(({ position, id }) => {
