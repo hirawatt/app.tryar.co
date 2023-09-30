@@ -1,13 +1,27 @@
 import { Interactive, useHitTest, useXR } from "@react-three/xr";
-import { useRef, useState } from "react";
+import { Suspense, forwardRef, useCallback, useImperativeHandle, useRef, useState } from "react";
 import Model from "./Model";
 import PropTypes from 'prop-types';
 
-const XrHitModel = ({ itemModel }) => {
+const XrHitModel = ({ itemModel }, ref) => { //eslint-disable-line
   const reticleRef = useRef(null);
   const isPresenting = useXR(state => state.isPresenting);
   const referenceSpace = useXR(state => state.referenceSpace);
   const [modelPosition, setModelPosition] = useState([]);
+
+  const placeModel = useCallback(() => {
+    if(reticleRef.current) {
+      let position = reticleRef.current.position.clone();
+      let id = Date.now();
+      setModelPosition([{ position, id }]);
+    }
+  }, [])
+
+  useImperativeHandle(ref, () => {
+    return {
+      placeModel: placeModel
+    }
+  }, [placeModel])
 
   //detecting the intersection of a ray with real-world surfaces
   useHitTest((hitMatrix) => {
@@ -19,19 +33,17 @@ const XrHitModel = ({ itemModel }) => {
   
     reticleRef.current.rotation.set(-Math.PI / 2, 0, 0);
   }, referenceSpace);
-    
-  const placeModel = (e) => {
-    let position = e.intersection.object.position.clone();
-    let id = Date.now();
-    setModelPosition([{ position, id }]);
-  }
 
   return (
     <>
       <ambientLight />
       {isPresenting && 
       modelPosition.map(({ position, id }) => {
-        return <Model key={id} position={position} itemModel={itemModel} />;
+        return (
+          <Suspense key={id}>
+            <Model position={position} itemModel={itemModel} />
+          </Suspense>
+        )
       })
       }
       {isPresenting && (
@@ -48,11 +60,14 @@ const XrHitModel = ({ itemModel }) => {
   );
 };
 
-XrHitModel.propTypes = {
+const ForwardedXrHitModel = forwardRef(XrHitModel);
+ForwardedXrHitModel.displayName = 'XrHitModel';
+
+ForwardedXrHitModel.propTypes = {
   itemModel: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.oneOf([null]),
-  ]),
+  ])
 };
 
-export default XrHitModel;
+export default ForwardedXrHitModel;
