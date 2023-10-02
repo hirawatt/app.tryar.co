@@ -4,8 +4,8 @@ import { TextureLoader } from 'three/src/loaders/TextureLoader';
 import PropTypes from "prop-types";
 
 const Model = ({ position, itemModel }) => {
-  const gltf = useLoader(GLTFLoader, '/src/assets/1.glb' || itemModel) //pathing is different, it is relative to root file instead of this file
-  const texture = useLoader(TextureLoader, '/src/assets/photo_studio_01_1k.jpg')
+  const gltf = useLoader(GLTFLoader, `${import.meta.env.VITE_PUBLIC_BUCKET_URL}/${itemModel}`);
+  const texture = useLoader(TextureLoader, '/src/assets/photo_studio_01_1k.jpg');
   return <primitive position={position} object={gltf.scene} material={{map: texture}}/> //eslint-disable-line
 };
 
