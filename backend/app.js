@@ -52,11 +52,11 @@ app.get('/items', (req, res) => res.redirect(process.env.CLIENT_URI + '/items' |
 app.get('/', (req, res) => res.redirect(process.env.CLIENT_URI || 'http://localhost:3000'));
 
 //unknown path
-app.use((req, res, next) => {
-    const err = new Error('Not found');
-    err.status = 404;
-    next(err);
-});
+// app.use((req, res, next) => {
+//     const err = new Error('Not found');
+//     err.status = 404;
+//     next(err);
+// });
 
 // listining for port
 app.listen(PORT, () => console.log(`TryAR backend running on port ${PORT}....`));
