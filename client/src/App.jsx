@@ -27,7 +27,7 @@ function App({ user, fetch_user }) {
   }, [fetch_user])
 
   //if (user === null) { return <div>Connecting to server...</div> }
-  
+  console.log(user);
   //protected routes
   return (
     <Routes>
