@@ -5,6 +5,7 @@ export const fetchUser = () => async dispatch => {
     const user = await axios.get(`${import.meta.env.VITE_BACKEND_API}/current_user`, {
         withCredentials: true
     });
+    console.log(user);
     dispatch({
         type: 'GET_USER',
         payload: user.data
