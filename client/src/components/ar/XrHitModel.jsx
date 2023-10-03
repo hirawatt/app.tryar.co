@@ -9,6 +9,10 @@ const XrHitModel = ({ itemModel }, ref) => { //eslint-disable-line
   const referenceSpace = useXR(state => state.referenceSpace);
   const [modelPosition, setModelPosition] = useState([]);
 
+  const resetModelPositon = () => {
+    setModelPosition([]);
+  }
+
   const placeModel = useCallback(() => {
     if(reticleRef.current) {
       let position = reticleRef.current.position.clone();
@@ -19,7 +23,8 @@ const XrHitModel = ({ itemModel }, ref) => { //eslint-disable-line
 
   useImperativeHandle(ref, () => {
     return {
-      placeModel: placeModel
+      placeModel: placeModel,
+      resetModelPositon: resetModelPositon
     }
   }, [placeModel])
 
@@ -30,7 +35,7 @@ const XrHitModel = ({ itemModel }, ref) => { //eslint-disable-line
       reticleRef.current.quaternion,
       reticleRef.current.scale
     );
-  
+
     reticleRef.current.rotation.set(-Math.PI / 2, 0, 0);
   }, referenceSpace);
 

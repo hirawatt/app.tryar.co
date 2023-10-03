@@ -66,6 +66,7 @@ const XrHitModelContainer = () => {
     if (session) {
       await session.end();
       setSession(null);
+      xrHitModelRef.current.resetModelPositon();
     }
   }
 
