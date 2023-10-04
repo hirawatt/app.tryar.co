@@ -32,7 +32,7 @@ function App({ user, fetch_user }) {
   return (
     <Routes>
       <Route exact path="/" element={<ComponentWithSuspense component={FrontPage} />} />
-      <Route path="/profile" element={user ? <ComponentWithSuspense component={ConnectedProfilePage} /> : <Navigate to="/" />} />
+      <Route path="/profile" element={<ComponentWithSuspense component={ConnectedProfilePage} />} />
       <Route path="/items" element={user ? <ComponentWithSuspense component={ConnectedItemUploadPage} /> : <Navigate to="/" />} />
       <Route path="/ar/:userId" element={<ComponentWithSuspense component={XrHitModelContainer} />} />
     </Routes>

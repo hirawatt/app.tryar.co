@@ -51,9 +51,9 @@ const ProfilePage = ({ user, fetch_user }) => {
   )
 }
 
-const mapDispatchToProps = (dispatch) => ({ fetch_user:() => {dispatch(fetchUser())} })
+// const mapDispatchToProps = (dispatch) => ({ fetch_user:() => {dispatch(fetchUser())} })
 
-const mapStateToProps = (state) => ({ user: state })
+// const mapStateToProps = (state) => ({ user: state })
 
 ProfilePage.propTypes = {
   user: PropTypes.shape({
@@ -66,5 +66,6 @@ ProfilePage.propTypes = {
   fetch_user: PropTypes.func.isRequired
 };
 
-const ConnectedProfilePage = connect(mapStateToProps, mapDispatchToProps)(ProfilePage);
+const ConnectedProfilePage = (ProfilePage);
+//connect(mapStateToProps, mapDispatchToProps)
 export default ConnectedProfilePage;
